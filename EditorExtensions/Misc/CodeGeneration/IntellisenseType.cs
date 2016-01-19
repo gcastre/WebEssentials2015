@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Globalization;
+using MadsKristensen.EditorExtensions.Settings;
 
 namespace MadsKristensen.EditorExtensions
 {
@@ -74,7 +75,6 @@ namespace MadsKristensen.EditorExtensions
             }
         }
 
-
         private string GetTargetName(string codeName, bool js)
         {
             var t = codeName.ToLowerInvariant().TrimEnd('?');
@@ -104,6 +104,9 @@ namespace MadsKristensen.EditorExtensions
                 case "bool":
                 case "boolean":
                     return js ? "Boolean" : "boolean";
+                case "guid":
+                case "system.guid":
+                    return GetGuidType(js);
             }
             return js ? "Object" : GetComplexTypeScriptName();
         }
@@ -127,6 +130,15 @@ namespace MadsKristensen.EditorExtensions
             string valueType = GetTargetName(types[1].Trim(), false);
 
             return string.Format(CultureInfo.CurrentCulture, "{{ [index: {0}]: {1} }}", keyType, valueType);
+        }
+
+        private string GetGuidType(bool js)
+        {
+            if(WESettings.Instance.CodeGen.GuidAsString)
+            {
+                return js ? "String" : "string";
+            }
+            return js ? "Object" : GetComplexTypeScriptName();
         }
     }
 }

@@ -183,6 +183,11 @@ namespace MadsKristensen.EditorExtensions.Settings
         [Description("Add TypeScript reference path in generated JS/TS files.")]
         [DefaultValue(true)]
         public bool AddTypeScriptReferencePath { get; set; }
+
+        [DisplayName("Bind Guid as string")]
+        [Description("Bind a C# Guid to a string in TS/JS")]
+        [DefaultValue(true)]
+        public bool GuidAsString { get; set; }
     }
 
     //public interface ILinterSettings
