@@ -188,6 +188,11 @@ namespace MadsKristensen.EditorExtensions.Settings
         [Description("Bind a C# Guid to a string in TS/JS")]
         [DefaultValue(true)]
         public bool GuidAsString { get; set; }
+
+        [DisplayName("Bind Enum as string")]
+        [Description("Bind a C# Enum to a string interpolation in TS/JS")]
+        [DefaultValue(true)]
+        public bool EnumAsString { get; set; }
     }
 
     //public interface ILinterSettings

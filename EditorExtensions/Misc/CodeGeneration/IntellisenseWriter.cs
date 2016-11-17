@@ -13,7 +13,7 @@ namespace MadsKristensen.EditorExtensions
 {
     internal static class IntellisenseWriter
     {
-        public async static Task Write(IEnumerable<IntellisenseObject> objects, string file)
+        public static Task Write(IEnumerable<IntellisenseObject> objects, string file)
         {
             StringBuilder sb = new StringBuilder();
 
@@ -22,7 +22,7 @@ namespace MadsKristensen.EditorExtensions
             else
                 WriteJavaScript(objects, sb);
 
-            await FileHelpers.WriteAllTextRetry(file, sb.ToString());
+            return FileHelpers.WriteAllTextRetry(file, sb.ToString());
         }
 
         private static string CamelCaseEnumValue(string name)
@@ -68,6 +68,11 @@ namespace MadsKristensen.EditorExtensions
             var trimedValue = value.TrimStart('0'); // prevent numbers to be parsed as octal in js.
             if (trimedValue.Length > 0) return trimedValue;
             return "0";
+        }
+
+        private static bool EnumAsString()
+        {
+            return (WESettings.Instance.CodeGen.EnumAsString);
         }
 
         private static readonly Regex whitespaceTrimmer = new Regex(@"^\s+|\s+$|\s*[\r\n]+\s*", RegexOptions.Compiled);
@@ -124,24 +129,24 @@ namespace MadsKristensen.EditorExtensions
             // Taken from http://blog.slaks.net/2013-09-03/traditional-inheritance-in-javascript/
 
             return @"function inherits(subConstructor, superConstructor) {
-    var proto = Object.create(
-        superConstructor.prototype,
-        {
-            ""constructor"": { 
-                configurable: true,
-                enumerable: false,
-                writable: true,
-                value: subConstructor
-            }
-        }
-    );
-    Object.defineProperty(subConstructor, ""prototype"",  { 
-        configurable: true,
-        enumerable: false,
-        writable: true,
-        value: proto
-    });
-}" + Environment.NewLine + Environment.NewLine;
+                var proto = Object.create(
+                    superConstructor.prototype,
+                    {
+                        ""constructor"": {
+                            configurable: true,
+                            enumerable: false,
+                            writable: true,
+                            value: subConstructor
+                        }
+                    }
+                );
+                Object.defineProperty(subConstructor, ""prototype"",  {
+                    configurable: true,
+                    enumerable: false,
+                    writable: true,
+                    value: proto
+                });
+            }" + Environment.NewLine + Environment.NewLine;
         }
 
         internal static void WriteTypeScript(IEnumerable<IntellisenseObject> objects, StringBuilder sb, string file = null)
@@ -167,23 +172,30 @@ namespace MadsKristensen.EditorExtensions
 
                     if (io.IsEnum)
                     {
-                        sb.AppendLine("\tconst enum " + CamelCaseClassName(io.Name) + " {");
-
-                        foreach (var p in io.Properties)
+                        if (EnumAsString())
                         {
-                            WriteTypeScriptComment(p, sb);
-
-                            if (p.InitExpression != null)
-                            {
-                                sb.AppendLine("\t\t" + CamelCaseEnumValue(p.Name) + " = " + CleanEnumInitValue(p.InitExpression) + ",");
-                            }
-                            else
-                            {
-                                sb.AppendLine("\t\t" + CamelCaseEnumValue(p.Name) + ",");
-                            }
+                            sb.AppendLine($"type {CamelCaseClassName(io.Name)} = {string.Join("|", io.Properties)}");
                         }
+                        else
+                        {
+                            sb.AppendLine("\tconst enum " + CamelCaseClassName(io.Name) + " {");
 
-                        sb.AppendLine("\t}");
+                            foreach (var p in io.Properties)
+                            {
+                                WriteTypeScriptComment(p, sb);
+
+                                if (p.InitExpression != null)
+                                {
+                                    sb.AppendLine("\t\t" + CamelCaseEnumValue(p.Name) + " = " + CleanEnumInitValue(p.InitExpression) + ",");
+                                }
+                                else
+                                {
+                                    sb.AppendLine("\t\t" + CamelCaseEnumValue(p.Name) + ",");
+                                }
+                            }
+
+                            sb.AppendLine("\t}");
+                        }
                     }
                     else
                     {
