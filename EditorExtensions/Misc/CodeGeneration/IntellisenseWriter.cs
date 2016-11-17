@@ -127,7 +127,7 @@ namespace MadsKristensen.EditorExtensions
     var proto = Object.create(
         superConstructor.prototype,
         {
-            ""constructor"": { 
+            ""constructor"": {
                 configurable: true,
                 enumerable: false,
                 writable: true,
@@ -135,7 +135,7 @@ namespace MadsKristensen.EditorExtensions
             }
         }
     );
-    Object.defineProperty(subConstructor, ""prototype"",  { 
+    Object.defineProperty(subConstructor, ""prototype"",  {
         configurable: true,
         enumerable: false,
         writable: true,

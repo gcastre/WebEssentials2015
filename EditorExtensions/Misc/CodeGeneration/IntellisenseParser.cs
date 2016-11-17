@@ -242,7 +242,7 @@ namespace MadsKristensen.EditorExtensions
             {
                 IsArray = !isDictionary && (isArray || isCollection),
                 IsDictionary = isDictionary,
-                CodeName = effectiveTypeRef.AsString,
+                CodeName = isCollection ? codeTypeRef.AsString : effectiveTypeRef.AsString,
                 ClientSideReferenceName =
                     effectiveTypeRef.TypeKind == vsCMTypeRef.vsCMTypeRefCodeType &&
                     effectiveTypeRef.CodeType.InfoLocation == vsCMInfoLocation.vsCMInfoLocationProject
