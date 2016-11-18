@@ -151,9 +151,11 @@ namespace MadsKristensen.EditorExtensions
 
         internal static void WriteTypeScript(IEnumerable<IntellisenseObject> objects, StringBuilder sb, string file = null)
         {
+            var objetcsList = objects.ToList();
+
             if (WESettings.Instance.CodeGen.AddTypeScriptReferencePath && !string.IsNullOrEmpty(file))
             {
-                var references = objects.SelectMany(io => io.References.Where(r => r != file)).Distinct().ToList();
+                var references = objetcsList.SelectMany(io => io.References.Where(r => r != file)).Distinct().ToList();
 
                 foreach (var reference in references)
                     sb.AppendFormat("/// <reference path=\"{0}\" />\r\n", FileHelpers.RelativePath(file, reference));
@@ -161,7 +163,7 @@ namespace MadsKristensen.EditorExtensions
                 if (references.Count > 0) sb.AppendLine();
             }
 
-            foreach (var ns in objects.GroupBy(o => o.Namespace))
+            foreach (var ns in objetcsList.GroupBy(o => o.Namespace))
             {
                 sb.AppendFormat("declare module {0} {{\r\n", ns.Key);
 
@@ -174,7 +176,7 @@ namespace MadsKristensen.EditorExtensions
                     {
                         if (EnumAsString())
                         {
-                            sb.AppendLine($"type {CamelCaseClassName(io.Name)} = {string.Join("|", io.Properties)}");
+                            sb.AppendLine($"\texport type {CamelCaseClassName(io.Name)} = '{string.Join("'|'", io.Properties.Select(x => CamelCaseEnumValue(x.Name)))}';");
                         }
                         else
                         {
