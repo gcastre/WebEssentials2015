@@ -387,13 +387,15 @@ namespace MadsKristensen.EditorExtensions
 
             try
             {
-                string summary = XElement.Parse(xmlComment)
-                               .Descendants("summary")
-                               .Select(x => x.Value)
-                               .FirstOrDefault();
-                if (!string.IsNullOrEmpty(summary)) return summary.Trim();
-                if (!string.IsNullOrWhiteSpace(inlineComment)) return inlineComment.Trim();
-                return null;
+                if (!string.IsNullOrWhiteSpace(xmlComment))
+                {
+                    string summary = XElement.Parse(xmlComment)
+                        .Descendants("summary")
+                        .Select(x => x.Value)
+                        .FirstOrDefault();
+                    if (!string.IsNullOrEmpty(summary)) return summary.Trim();
+                }
+                return !string.IsNullOrWhiteSpace(inlineComment) ? inlineComment.Trim() : null;
             }
             catch (Exception ex)
             {

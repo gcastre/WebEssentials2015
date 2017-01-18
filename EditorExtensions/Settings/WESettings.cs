@@ -189,6 +189,16 @@ namespace MadsKristensen.EditorExtensions.Settings
         [DefaultValue(true)]
         public bool GuidAsString { get; set; }
 
+        [DisplayName("Bind Version as string")]
+        [Description("Bind a C# Version to a string in TS/JS")]
+        [DefaultValue(true)]
+        public bool VersionAsString { get; set; }
+
+        [DisplayName("Bind IpAddress as string")]
+        [Description("Bind a C# IpAddress to a string in TS/JS")]
+        [DefaultValue(true)]
+        public bool IpAddressAsString { get; set; }
+
         [DisplayName("Bind Enum as string")]
         [Description("Bind a C# Enum to a string interpolation in TS/JS")]
         [DefaultValue(true)]

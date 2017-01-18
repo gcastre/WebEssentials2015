@@ -60,17 +60,17 @@ namespace MadsKristensen.EditorExtensions
                 switch (JavaScriptName)
                 {
                     case "Number":
-                        return "0";
+                    return "0";
                     case "String":
-                        return "''";
+                    return "''";
                     case "Boolean":
-                        return "false";
+                    return "false";
                     case "Array":
-                        return "[]";
+                    return "[]";
                     case "Object":
-                        return "{ }";
+                    return "{ }";
                     default:
-                        return "new " + JavaScriptName + "()";
+                    return "new " + JavaScriptName + "()";
                 }
             }
         }
@@ -90,23 +90,29 @@ namespace MadsKristensen.EditorExtensions
                 case "double":
                 case "decimal":
                 case "biginteger":
-                    return js ? "Number" : "number";
+                return js ? "Number" : "number";
 
                 case "datetime":
                 case "datetimeoffset":
                 case "system.datetime":
                 case "system.datetimeoffset":
-                    return "Date";
+                return "Date";
 
                 case "string":
-                    return js ? "String" : "string";
+                return js ? "String" : "string";
 
                 case "bool":
                 case "boolean":
-                    return js ? "Boolean" : "boolean";
+                return js ? "Boolean" : "boolean";
                 case "guid":
                 case "system.guid":
-                    return GetGuidType(js);
+                return GetGuidType(js);
+                case "version":
+                case "system.version":
+                return GetVersionType(js);
+                case "ipaddress":
+                case "system.net.ipaddress":
+                return GetIpAddressType(js);
             }
             return js ? "Object" : GetComplexTypeScriptName();
         }
@@ -134,7 +140,25 @@ namespace MadsKristensen.EditorExtensions
 
         private string GetGuidType(bool js)
         {
-            if(WESettings.Instance.CodeGen.GuidAsString)
+            if (WESettings.Instance.CodeGen.GuidAsString)
+            {
+                return js ? "String" : "string";
+            }
+            return js ? "Object" : GetComplexTypeScriptName();
+        }
+
+        private string GetVersionType(bool js)
+        {
+            if (WESettings.Instance.CodeGen.VersionAsString)
+            {
+                return js ? "String" : "string";
+            }
+            return js ? "Object" : GetComplexTypeScriptName();
+        }
+
+        private string GetIpAddressType(bool js)
+        {
+            if (WESettings.Instance.CodeGen.IpAddressAsString)
             {
                 return js ? "String" : "string";
             }
